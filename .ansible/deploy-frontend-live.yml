@@ -1,0 +1,19 @@
+---
+- hosts: production
+  remote_user: developer
+
+  vars:
+    remote_basedir: /home/developer/sites/samworks-ffhs-deep-slumber-live
+    project_id: samworks-ffhs-deep-slumber-live
+
+  tasks:
+  - name: Create Base Dir
+    file:
+      path: "{{ remote_basedir }}"
+      state: directory
+
+  - name: Copy assets
+      repo: ssh://git@alphacentauri-samworks.synology.me:30001/samworks/ffhs-webe-hh.git
+      dest: "{{ remote_basedir }}"
+      version: "backend-production"
+      - scp -r frontend/static/* developer@"$SERVER_ADDRESS_PRODUCTION":"$PROJECT_BASE_DIR_PRODUCTION"/frontend/static

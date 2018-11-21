@@ -15,7 +15,8 @@ module.exports = {
     },
     output: {
         filename: 'js/[name].[contenthash].js',
-        path: path.resolve('assets/dist/')
+        path: path.resolve('assets/dist/'),
+        publicPath: '/assets/dist/',
     },
     module: {
         rules: [

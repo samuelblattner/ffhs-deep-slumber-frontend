@@ -41,9 +41,13 @@
         methods: {
             login() {
                 axios.post(
-                    'http://localhost:8081/api/auth/login/', {}
+                    '/api/users/login/', {
+                        username: 'sam',
+                        password: 'pass'
+                    }
                 ).then(response => {
-                    alert('hey');
+
+
                 })
             }
         }

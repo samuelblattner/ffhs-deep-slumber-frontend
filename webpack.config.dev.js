@@ -3,7 +3,7 @@
 const path = require('path');
 const {VueLoaderPlugin} = require('vue-loader');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
 module.exports = {
@@ -47,7 +47,10 @@ module.exports = {
         },{
             from: './node_modules/@fortawesome/fontawesome-free/',
             to: './css/libs/fontawesome'
-        }
+        },{
+            from: './index.html',
+            to: './'
+        },
         ]),
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({

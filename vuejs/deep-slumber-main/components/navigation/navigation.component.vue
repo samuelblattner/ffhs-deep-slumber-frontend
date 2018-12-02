@@ -11,7 +11,10 @@
         </div>
         <div class="navbar-menu">
             <div class="navbar-end">
-                <router-link to="/login"><a class="navbar-item">Login</a></router-link>
+                <router-link to="/login" v-if="!user"><a class="navbar-item">Login</a></router-link>
+                <router-link to="/logout" v-if="user"><a class="navbar-item">Logout</a></router-link>
+                <router-link to="/signup" v-if="!user"><a class="navbar-item">Sign Up</a></router-link>
+                <a v-if="user">{{user.username}}</a>
             </div>
 
         </div>
@@ -20,12 +23,22 @@
 
 <script>
 
+    import User from "../auth/models/User.model";
+
     export default {
         components: {
         },
-        props: {},
+        props: {
+            user: {
+                type: User,
+                default: null
+            }
+        },
         data() {
             return {}
         },
+        watch: {
+
+        }
     }
 </script>

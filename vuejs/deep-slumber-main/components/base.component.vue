@@ -1,7 +1,7 @@
 <template>
     <div id="deep-slumber-main">
 
-        <NavigationComponent></NavigationComponent>
+        <NavigationComponent :user="user"></NavigationComponent>
         <section class="section">
         <router-view></router-view>
         </section>
@@ -14,13 +14,30 @@
 
     import NavigationComponent from './navigation/navigation.component.vue';
 
+
     export default {
         components: {
             NavigationComponent
         },
         props: {},
         data() {
-            return {}
+            return {
+                user: null
+            }
         },
+        methods: {
+            handleUserChanged(user) {
+                this.user = user;
+            }
+        },
+        mounted() {
+            if (window.ctx && window.ctx.user) {
+                this.user = window.ctx.user;
+            }
+            this.$eventBus.$on('user-changed', this.handleUserChanged);
+
+
+        }
+
     }
 </script>

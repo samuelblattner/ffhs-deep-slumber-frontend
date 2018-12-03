@@ -1,7 +1,29 @@
-body {
-  color: green;
+body, html {
+  height: 100%;
 }
+
 #deep-slumber-main {
-  display: block;
+
+  display: table;
   color: green;
+
+  width: 100%;
+  height: 100%;
+
+  #content-row {
+    height: 100%;
+
+    display: table-row;
+
+    #content {
+      display: table-cell;
+    }
+  }
+
+  footer {
+    height: 5rem;
+
+    display: table-row;
+  }
+
 }

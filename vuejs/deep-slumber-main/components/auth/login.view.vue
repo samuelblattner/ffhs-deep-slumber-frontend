@@ -1,5 +1,12 @@
 <template>
-    <div id="login-form" class="column is-one-third-desktop is-offset-one-third-desktop is-full-mobile">
+
+    <form id="login-form" class="column is-one-third-desktop is-offset-one-third-desktop is-full-mobile" action="" @submit="login">
+
+        <div class="notification is-warning" v-if="validateMsg !== ''">
+            <button class="delete"></button>
+            <div v-html="validateMsg"></div>
+        </div>
+
         <div class="field">
             <label class="label">Username</label>
             <div class="control has-icons-left">
@@ -19,24 +26,30 @@
             </p>
         </div>
 
-        <div class="button is-primary is-fullwidth" @click="login();">Login</div>
-    </div>
+        <input type="submit" class="button is-primary is-fullwidth" @click="login" value="Login" />
+    </form>
 </template>
 
 <script>
 
     import axios from 'axios';
-    import User from "./models/User.model.js";
+    import User from "../user/models/User.model.js";
 
 
     export default {
         components: {},
         props: {},
         data() {
-            return {}
+            return {
+                validateMsg: ''
+            }
         },
         methods: {
-            login() {
+            login(e) {
+
+                e.preventDefault();
+                e.cancelBubble = true;
+
                 let that = this;
                 axios.post(
                     '/api/users/login/', {
@@ -51,9 +64,8 @@
 
                     this.$router.push('/');
 
-
                 }).catch(error => {
-                    alert(error);
+                    that.validateMsg = error.response.data;
                 })
             }
         }

@@ -1,27 +1,35 @@
 <template>
     <div>
-        <h1>TEST</h1>
-        <section class="section">
-            <div id="deep-slumber-main"></div>
-            <div class="container">
-                <h1 class="title">
-                    Hello World
-                </h1>
-                <p class="subtitle">
-                    My first website with <strong>Bulma</strong>!
-                </p>
-            </div>
+        <section class="section" v-if="!user">
+            <WelcomeWidget />
         </section>
+
+        <section class="columns" v-if="user">
+            <SleepStatsWidget />
+            <AlarmSettingsWidget />
+        </section>
+
     </div>
 </template>
 
 <script>
 
+    import AlarmSettingsWidget from './widgets/AlarmSettings.widget.vue';
+    import SleepStatsWidget from './widgets/SleepStats.widget.vue';
+    import WelcomeWidget from './widgets/Welcome.widget.vue';
+
     export default {
-        components: {},
-        props: {},
-        data() {
-            return {}
+        components: {
+            WelcomeWidget,
+            AlarmSettingsWidget,
+            SleepStatsWidget
         },
+        props: {},
+        computed: {
+            user() {
+                console.log('hui');
+                return this.$eventBus.user;
+            }
+        }
     }
 </script>

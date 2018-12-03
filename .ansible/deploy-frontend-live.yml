@@ -13,7 +13,12 @@
       state: directory
 
   - name: Copy assets
-      repo: ssh://git@alphacentauri-samworks.synology.me:30001/samworks/ffhs-webe-hh.git
+    synchronize:
+      src: ./../frontend.tar.gz
       dest: "{{ remote_basedir }}"
-      version: "backend-production"
-      - scp -r frontend/static/* developer@"$SERVER_ADDRESS_PRODUCTION":"$PROJECT_BASE_DIR_PRODUCTION"/frontend/static
+
+  - name: Extract assets
+    unarchive:
+      src: "{{ remote_basedir }}/frontend.tar.gz"
+      dest: "{{ remote_basedir }}/frontend"
+      remote_src: yes

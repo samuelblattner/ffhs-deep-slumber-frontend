@@ -1,23 +1,20 @@
 image: samuelblattner/ubuntu-18.04-nginx-php-postgres-ansible
 
 stages:
-  - Test
+  - Build
   - Deploy
 
-before_script:
-  - mkdir -p backend/generated
-  - cd backend && source ./scripts/install-composer.sh
-  - php composer.phar install
-
-PHPUnit Tests:
-  stage: Test
-  only:
-    - backend/master
-
+Build Frontend:
   script:
-    - ./vendor/bin/phpunit modules
+    - npm run build-prod
+    - tar -zcf frontend.tar.gz assets/dist
 
-Deploy Backend to Production:
+  artifacts:
+    paths:
+      - frontend.tar.gz
+    expire_in: 2 hours
+
+Deploy Frontend to Production:
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
@@ -34,4 +31,4 @@ Deploy Backend to Production:
   environment:
     name: production
   only:
-    - backend/master
+    - master

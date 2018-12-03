@@ -1,12 +1,14 @@
 <template>
     <div id="deep-slumber-main">
-
-        <NavigationComponent :user="user"></NavigationComponent>
-        <section class="section">
-        <router-view></router-view>
-        </section>
-        <footer class="footer is-fixed-bottom-desktop">The Footer</footer>
-
+        <div id="content-row">
+            <div id="content">
+                <NavigationComponent :user="user"></NavigationComponent>
+                <section class="section">
+                    <router-view></router-view>
+                </section>
+            </div>
+        </div>
+        <footer class="footer is-fixed-bottom">The Footer</footer>
     </div>
 </template>
 
@@ -28,16 +30,22 @@
         methods: {
             handleUserChanged(user) {
                 this.user = user;
+                this.$eventBus.user = user;
+                if (!window.ctx) {
+                    window.ctx = {}
+                }
+                window.ctx['user'] = user;
             }
         },
-        mounted() {
+        created() {
             if (window.ctx && window.ctx.user) {
                 this.user = window.ctx.user;
+                this.$eventBus.user = this.user;
             }
-            this.$eventBus.$on('user-changed', this.handleUserChanged);
-
-
+            let that = this;
+            this.$eventBus.$on('user-changed', function (user) {
+                that.handleUserChanged(user);
+            });
         }
-
     }
 </script>

@@ -16,12 +16,15 @@
         },
         mounted() {
 
+            let that = this;
+
             axios.post(
                 '/api/users/logout/', {}
             ).then(response => {
-
+                that.$eventBus.$emit('user-changed', null);
             }).catch(error => {
-                alert(error);
+                console.log('errore');
+                console.log(error);
             })
 
         }

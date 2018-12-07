@@ -32,7 +32,7 @@ Deploy Frontend to Production:
 
   stage: Deploy
   script:
-    - ansible-playbook -i ./backend/.ansible/hosts ./backend/.ansible/deploy-backend-live.yml
+    - ansible-playbook -i ./backend/.ansible/hosts ./backend/.ansible/deploy-frontend-live.yml
   environment:
     name: production
   only:

@@ -106,9 +106,8 @@
                         password: this.$refs.password.value
                     }
                 ).then(response => {
-                    let user = new User();
+                    let user = new User(response.data);
                     console.log(response);
-                    user.username = response.data['username'];
                     that.$eventBus.$emit('user-changed', user);
 
                     this.$router.push('/');

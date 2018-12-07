@@ -23,6 +23,12 @@ AbstractSerializeable.prototype.deserialize = function(raw){
     }
 };
 
+AbstractSerializeable.prototype.serialize = function() {
+
+    return JSON.stringify(this);
+};
+
+
 
 
 export default AbstractSerializeable;

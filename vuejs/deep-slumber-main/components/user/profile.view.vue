@@ -15,17 +15,21 @@
                 <div class="field">
                     <label class="label">Change password</label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input" type="password" placeholder="New password" ref="password" @keyup="checkPassword">
+                        <input class="input" type="password" placeholder="New password" ref="password"
+                               @keyup="checkPassword">
                         <span class="icon is-small is-left"><i class="fas fa-lock"></i></span>
-                        <span class="icon is-small is-right" v-if="passwordsMatch && passwordValid"><i class="fas fa-check"></i></span>
+                        <span class="icon is-small is-right" v-if="passwordsMatch && passwordValid"><i
+                                class="fas fa-check"></i></span>
                     </p>
                 </div>
 
                 <div class="field">
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input" type="password" placeholder="Repeat password" ref="password2" @keyup="checkPassword">
+                        <input class="input" type="password" placeholder="Repeat password" ref="password2"
+                               @keyup="checkPassword">
                         <span class="icon is-small is-left"><i class="fas fa-lock"></i></span>
-                        <span class="icon is-small is-right" v-if="passwordsMatch && passwordValid"><i class="fas fa-check"></i></span>
+                        <span class="icon is-small is-right" v-if="passwordsMatch && passwordValid"><i
+                                class="fas fa-check"></i></span>
                     </p>
                 </div>
                 <p class="help is-danger" v-if="!passwordsMatch">Passwords do not match!</p>
@@ -47,11 +51,27 @@
 
         <section class="section">
 
-                <h1 class="title">My Devices</h1>
-                <DeviceComponent :user="user ? user : null" />
+            <h1 class="title">My Devices</h1>
+            <DeviceComponent :user="user ? user : null"/>
 
         </section>
 
+        <section class="section">
+            <h1 class="title">Delete Account</h1>
+            <button class="button is-danger is-fullwidth" @click="(e) => {deleteAccount(false)}">Delete Account</button>
+
+            <div class="modal" :class="{'is-active': showDeleteModal}">
+                <div class="modal-background"></div>
+                <div class="modal-content">
+                    <div class="box">
+                        <p>Do you really want to delete your account? This action cannot be undone!</p>
+                        <button class="button is-danger is-fullwidth" @click="deleteAccount(true)">Yes, delete</button>
+                        <button class="button has-background-grey-light is-fullwidth" @click="closeModal">No, abort</button>
+                    </div>
+                </div>
+                <button class="modal-close is-large" aria-label="close" @click="closeModal"></button>
+            </div>
+        </section>
     </div>
 </template>
 
@@ -73,11 +93,27 @@
                 passwordsMatch: true,
                 passwordValid: true,
                 validateMsg: '',
-                user: null
+                user: null,
+                showDeleteModal: false
             }
         },
         methods: {
-
+            closeModal() {
+                this.showDeleteModal = false;
+            },
+            deleteAccount(confirmed=false) {
+                if (!confirmed) {
+                    this.showDeleteModal = true;
+                } else {
+                    axios.delete(
+                        '/api/users/user/' + window.ctx.user.id + '/delete/', {
+                        }
+                    ).then(response => {
+                        this.$eventBus.$emit('user-changed', null);
+                        this.$router.push('/');
+                    });
+                }
+            },
             validateData() {
                 this.checkPassword();
                 this.validateMsg = '';
@@ -109,10 +145,8 @@
                         password: this.$refs.password.value
                     }
                 ).then(response => {
-                    let user = new User();
-                    user.username = response.data['username'];
-                    that.$eventBus.$emit('user-changed', user);
-                    this.$router.push('/');
+                    let user = new User(response.data);
+                    this.$eventBus.$emit('user-changed', user);
 
                 }).catch(error => {
                     alert(error);

@@ -6,30 +6,37 @@
                 <section class="section">
                     <router-view></router-view>
                 </section>
+                <MobileNavigationOffCanvasComponent :user="user"></MobileNavigationOffCanvasComponent>
             </div>
         </div>
-        <footer class="footer is-fixed-bottom">The Footer</footer>
+        <footer class="footer is-fixed-bottom"></footer>
     </div>
 </template>
 
 <script>
 
     import NavigationComponent from './navigation/navigation.component.vue';
+    import MobileNavigationOffCanvasComponent from './navigation/mobile-off-canvas-navigation.component.vue';
 
 
     export default {
         components: {
-            NavigationComponent
+            NavigationComponent,
+            MobileNavigationOffCanvasComponent
         },
         props: {},
         data() {
             return {
-                user: null
+
+            }
+        },
+        computed: {
+            user() {
+                return this.$eventBus && this.$eventBus.user ? this.$eventBus.user : null;
             }
         },
         methods: {
             handleUserChanged(user) {
-                this.user = user;
                 this.$eventBus.user = user;
                 if (!window.ctx) {
                     window.ctx = {}
@@ -39,12 +46,17 @@
         },
         created() {
             if (window.ctx && window.ctx.user) {
-                this.user = window.ctx.user;
-                this.$eventBus.user = this.user;
+                this.$eventBus.user = window.ctx.user;
             }
             let that = this;
             this.$eventBus.$on('user-changed', function (user) {
                 that.handleUserChanged(user);
+            });
+        },
+        mounted() {
+            let that = this;
+            document.body.addEventListener('click', function(e) {
+                that.$eventBus.$emit('toggle-menu', false)
             });
         }
     }

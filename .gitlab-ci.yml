@@ -6,6 +6,7 @@ stages:
 
 Build Frontend:
   script:
+    - npm install
     - npm run build-prod
     - tar -zcf frontend.tar.gz assets/dist
 

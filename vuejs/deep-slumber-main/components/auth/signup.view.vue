@@ -113,7 +113,7 @@
                     this.$router.push('/');
 
                 }).catch(error => {
-                    alert(error);
+                    alert(that.validateMsg = error.response.data.error);
                 })
             },
             checkPassword() {

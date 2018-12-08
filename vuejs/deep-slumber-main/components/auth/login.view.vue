@@ -64,7 +64,7 @@
                     this.$router.push('/');
 
                 }).catch(error => {
-                    that.validateMsg = error.response.data;
+                    that.validateMsg = error.response.data.error;
                 })
             }
         }

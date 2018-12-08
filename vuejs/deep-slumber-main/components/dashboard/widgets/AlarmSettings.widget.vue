@@ -1,5 +1,5 @@
 <template>
-    <div class="column is-3-desktop is-full-mobile">
+    <div class="column is-full-width">
 
         <h1 class="title">
             Alarm settings
@@ -75,7 +75,8 @@
                     that.saved = true;
 
                     setTimeout(function() {
-                        that.saved = false
+                        that.saved = false;
+                        that.dirty = false;
                     }, 3000);
                 })
             },

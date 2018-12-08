@@ -80,7 +80,7 @@
                 let that = this;
 
                 axios.get(
-                    '/api/users/user/' + this.user.id + '/device/'
+                    '/api/users/user/device/'
                 ).then(response => {
                     that.devices = [];
                     for (let deviceData of response.data) {

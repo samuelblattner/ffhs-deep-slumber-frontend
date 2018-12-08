@@ -12,16 +12,18 @@
 
             <h2 class="title">Permissions</h2>
 
-            <PermissionComponent :userId="id" />
+            <PermissionComponent :userId="id"/>
 
         </section>
 
         <section class="section">
-
             <h2 class="title">Devices</h2>
+            <DeviceComponent :userId="id"/>
+        </section>
 
-            <DeviceComponent :userId="id" />
-
+        <section class="section">
+            <h2 class="title">Simulation</h2>
+            <button class="button is-fullwidth is-warning" @click="generateSleepCycle">{{genButtonText}}</button>
         </section>
 
     </div>
@@ -31,7 +33,7 @@
 
     import axios from 'axios';
     import PermissionComponent from './permissions.component.vue';
-    import DeviceComponent from './permissions.component.vue';
+    import DeviceComponent from './userdevices.component.vue';
 
 
     export default {
@@ -47,7 +49,8 @@
         },
         data() {
             return {
-                users: []
+                users: [],
+                genButtonText: 'Generate Random Sleep Cycle'
             }
         },
         methods: {
@@ -75,6 +78,19 @@
 
             deleteUser() {
 
+            },
+            generateSleepCycle() {
+                let that = this;
+                axios.post(
+                    '/api/drslumber/simulation/generate_sleep_cycle/', {
+                        'userId': this.id
+                    }
+                ).then(response => {
+                    that.genButtonText = 'Generated!';
+                    setTimeout(function() {
+                        that.genButtonText = 'Generate Random Sleep Cycle';
+                    }, 500);
+                })
             }
         },
         mounted() {

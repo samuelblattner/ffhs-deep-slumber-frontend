@@ -58,8 +58,7 @@
                     }
                 ).then(response => {
 
-                    let user = new User();
-                    user.username = response.data['username'];
+                    let user = new User(response.data);
                     that.$eventBus.$emit('user-changed', user);
 
                     this.$router.push('/');

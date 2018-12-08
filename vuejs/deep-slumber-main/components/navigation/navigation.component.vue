@@ -29,8 +29,6 @@
 
 <script>
 
-    import User from "../user/models/User.model";
-
     export default {
         components: {
         },

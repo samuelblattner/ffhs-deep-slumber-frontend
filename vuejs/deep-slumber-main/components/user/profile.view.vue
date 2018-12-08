@@ -12,6 +12,10 @@
                     <div v-html="validateMsg"></div>
                 </div>
 
+                <div class="notification is-success" v-if="successMsg !== ''">
+                    <div v-html="successMsg"></div>
+                </div>
+
                 <div class="field">
                     <label class="label">Change password</label>
                     <p class="control has-icons-left has-icons-right">
@@ -43,14 +47,6 @@
 
         <section class="section">
 
-            <div class="container">
-                <h1 class="title">Settings</h1>
-            </div>
-
-        </section>
-
-        <section class="section">
-
             <h1 class="title">My Devices</h1>
             <DeviceComponent :user="user ? user : null"/>
 
@@ -64,7 +60,12 @@
                 <div class="modal-background"></div>
                 <div class="modal-content">
                     <div class="box">
-                        <p>Do you really want to delete your account? This action cannot be undone!</p>
+                        <div class="notification is-warning" v-if="validateMsgDelUser !== ''">
+                            <button class="delete"></button>
+                            <div v-html="validateMsgDelUser"></div>
+                        </div>
+                        <h1 class="title">Warning</h1>
+                        <p class="is-text">Do you really want to delete your account? This action cannot be undone!</p>
                         <button class="button is-danger is-fullwidth" @click="deleteAccount(true)">Yes, delete</button>
                         <button class="button has-background-grey-light is-fullwidth" @click="closeModal">No, abort</button>
                     </div>
@@ -78,7 +79,6 @@
 <script>
 
     import axios from 'axios';
-    import _ from 'lodash';
     import User from "./models/User.model";
     import DeviceComponent from './device.component.vue';
 
@@ -93,6 +93,8 @@
                 passwordsMatch: true,
                 passwordValid: true,
                 validateMsg: '',
+                successMsg: '',
+                validateMsgDelUser: '',
                 user: null,
                 showDeleteModal: false
             }
@@ -111,6 +113,8 @@
                     ).then(response => {
                         this.$eventBus.$emit('user-changed', null);
                         this.$router.push('/');
+                    }).catch(error => {
+                        this.validateMsgDelUser = error.response.data.error;
                     });
                 }
             },
@@ -147,6 +151,10 @@
                 ).then(response => {
                     let user = new User(response.data);
                     this.$eventBus.$emit('user-changed', user);
+                    this.successMsg = 'Password updated';
+                    setTimeout(function() {
+                        that.successMsg = '';
+                    }, 1000);
 
                 }).catch(error => {
                     alert(error);

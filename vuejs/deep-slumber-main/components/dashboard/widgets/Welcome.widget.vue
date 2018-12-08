@@ -1,5 +1,5 @@
 <template>
-    <div class="column is-4-desktop is-offset-4-desktop is-full-mobile is-centered has-text-centered">
+    <div class="column is-fullwidth is-centered has-text-centered">
 
         <div class="welcome">The World sleeps</div>
         <div v-html="avgSleepHours" class="big-number"></div>

@@ -104,9 +104,6 @@
                 }
             },
             handleDeviceEvent(event) {
-                console.log('handle event');
-                console.log(event);
-                console.log(event.hwid);
                 for (let device of this.devices) {
                     if (device.hwid === event.hwid) {
                         device.events.push(event);
@@ -115,8 +112,6 @@
             },
             handleWebsocketMessage(msg) {
                 let parsedMessage = {};
-
-                console.log(msg);
 
                 try {
                     parsedMessage = JSON.parse(msg.data);
@@ -156,7 +151,6 @@
                 let request = new RequestDeviceStateMessage(
                     {hwid: this.devices[0].hwid}
                 );
-                console.log(request.serialize());
                 this.$socket.send(
                     request.serialize()
                 );

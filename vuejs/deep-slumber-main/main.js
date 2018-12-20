@@ -8,11 +8,13 @@ import SignUpView from './components/auth/signup.view.vue';
 import ProfileView from './components/user/profile.view.vue';
 import AdminUserView from './components/user/admin/user-list.view.vue';
 import AdminUserEditView from './components/user/admin/user-edit.view.vue';
+import VueNativeSock from '../../node_modules/vue-native-websocket'
 
 
 window.Vue = require('vue');
 let Vue = window.Vue;
 Vue.use(VueRouter);
+Vue.use(VueNativeSock, 'ws://localhost:8777', {format: 'json'});
 
 const routes = [
     {path: '/', component: DashboardView},

@@ -8,6 +8,9 @@ function Device(raw) {
     this.userId = null;
 
     this.status = null;
+    this.isConnected = false;
+
+    this.events = [];
 
     AbstractSerializeable.call(this, raw);
 }

@@ -1,13 +1,15 @@
 <template>
     <div>
-        <ul>
+        <ul class="content">
             <li v-for="device of devices" class="has-icon-right">
-                <div>{{device.hwid}}</div>
-                <div>{{device.status}}</div>
+                <div><strong>{{device.hwid.slice(0, 16)}}...</strong>(<span :class="{is_success:device.isConnected}">{{device.isConnected ? 'online' : 'offline'}}</span>)</div>
+                <ul>
+                    <li v-for="event of device.events">{{event}}</li>
+                </ul>
             </li>
             <li v-if="devices.length === 0" class=""><p>You haven't added any devices yet.</p></li>
-            <li @click="openModal" class="button is-primary is-fullwidth">Add device</li>
         </ul>
+        <button @click="openModal" class="button is-primary is-fullwidth">Add device</button>
         <div class="modal" :class="{'is-active': showAddModal}">
             <div class="modal-background"></div>
             <div class="modal-content">
@@ -21,9 +23,9 @@
                     <form action="" @submit="addDevice">
                         <p>Please enter the 8-digit ID of the device you would like to add:</p>
                         <div class="field">
-                            <input type="text" class="input" ref="deviceId" />
+                            <input type="text" class="input" ref="deviceId"/>
                         </div>
-                        <input class="button is-primary is-fullwidth" type="submit" value="Add" />
+                        <input class="button is-primary is-fullwidth" type="submit" value="Add"/>
                     </form>
                 </div>
             </div>
@@ -38,18 +40,21 @@
     import axios from 'axios';
     import Device from './models/Device.model';
     import User from './models/User.model';
+    import RequestDeviceStateMessage from "./value_objects/RequestDeviceStateMessage";
+
+    import Event from './value_objects/Event.js';
 
 
     export default {
         components: {},
-        props: {
-        },
+        props: {},
         data() {
             return {
                 devices: [],
                 validateMsg: '',
                 showAddModal: false,
-                user: null
+                user: null,
+                deviceState: null
             }
         },
         methods: {
@@ -87,6 +92,8 @@
                         that.devices.push(new Device(deviceData));
                     }
 
+                    that.establishLiveDeviceInfo();
+
                 }).catch(error => {
 
                 });
@@ -95,6 +102,64 @@
                 if (e.keyCode === 27) {
                     this.closeModal();
                 }
+            },
+            handleDeviceEvent(event) {
+                console.log('handle event');
+                console.log(event);
+                console.log(event.hwid);
+                for (let device of this.devices) {
+                    if (device.hwid === event.hwid) {
+                        device.events.push(event);
+                    }
+                }
+            },
+            handleWebsocketMessage(msg) {
+                let parsedMessage = {};
+
+                console.log(msg);
+
+                try {
+                    parsedMessage = JSON.parse(msg.data);
+                } catch {
+                    parsedMessage = msg.data;
+                }
+
+                if (parsedMessage.msgType) {
+                    switch (parsedMessage.msgType) {
+                        case 1: {
+                            for (let device of this.devices) {
+                                if (device.hwid === parsedMessage.hwid) {
+                                    device.isConnected = true;
+                                }
+                            }
+                            break;
+                        }
+                        case 4: {
+                              this.handleDeviceEvent(new Event(parsedMessage));
+                              break;
+                        }
+                        case 10: {
+                            for (let device of this.devices) {
+                                if (device.hwid === parsedMessage.hwid) {
+                                    device.isConnected = false;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+
+            },
+            establishLiveDeviceInfo() {
+
+
+                let request = new RequestDeviceStateMessage(
+                    {hwid: this.devices[0].hwid}
+                );
+                console.log(request.serialize());
+                this.$socket.send(
+                    request.serialize()
+                );
             }
 
         },
@@ -104,6 +169,8 @@
         mounted() {
             this.loadDevices();
             window.addEventListener('keyup', this.handleKeyUp, false);
+
+            this.$options.sockets.onmessage = this.handleWebsocketMessage;
         }
     }
 </script>

@@ -29,6 +29,4 @@ AbstractSerializeable.prototype.serialize = function() {
 };
 
 
-
-
 export default AbstractSerializeable;

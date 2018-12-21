@@ -44,6 +44,7 @@ window.$eventBus = new Vue({
         }
     },
 });
+
 Vue.prototype.$eventBus = window.$eventBus;
 
 new Vue({

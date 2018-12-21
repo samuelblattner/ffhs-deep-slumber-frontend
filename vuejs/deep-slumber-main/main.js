@@ -15,7 +15,7 @@ window.Vue = require('vue');
 let Vue = window.Vue;
 Vue.use(VueRouter);
 // Vue.use(VueNativeSock, 'ws://localhost:8777', {format: 'json'});
-Vue.use(VueNativeSock, 'ws://deep-slumber.samuelblattner.ch:8777', {format: 'json'});
+Vue.use(VueNativeSock, 'wss://deep-slumber.samuelblattner.ch:8777', {format: 'json'});
 
 const routes = [
     {path: '/', component: DashboardView},

@@ -94,7 +94,7 @@
                 for (let event of this.sleepProfile.events) {
                     if (event.type == template.event_type) {
                         values.push(template.value_fn(event.value));
-                        labels.push(template.label_fn(event.timestamp.date));
+                        labels.push(template.label_fn(event.timestamp));
                     }
                 }
                 let ctx = this.$refs.canvas;
@@ -130,7 +130,7 @@
                             }],
                             yAxes: [{
                                 ticks: {
-                                    beginAtZero:false
+                                    beginAtZero:true
                                 }
                             }]
                         }

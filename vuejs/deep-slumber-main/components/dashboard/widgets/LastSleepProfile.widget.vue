@@ -53,6 +53,8 @@
                         unit_label: 'Pressure millibars',
                         area_color: 'rgba(99, 255, 132, 0.2)',
                         line_color: 'rgba(99,255,132,1)',
+                        min: 900,
+                        max: 1200,
                         label_fn: (raw_label) => {return new Date(raw_label); },
                         value_fn: (raw_value) => {return raw_value.toFixed(2)}
                     },
@@ -125,12 +127,15 @@
                                     unit: 'second',
                                     displayFormats: {
                                         second: 'h:mm:ss a'
-                                    }
+                                    },
+                                    stepSize: 900
                                 }
                             }],
                             yAxes: [{
                                 ticks: {
-                                    beginAtZero:true
+                                    beginAtZero:true,
+                                    min: template.min,
+                                    max: template.max
                                 }
                             }]
                         }

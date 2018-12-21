@@ -128,7 +128,7 @@
                                     displayFormats: {
                                         second: 'h:mm:ss a'
                                     },
-                                    stepSize: 900
+                                    stepSize: 3600
                                 }
                             }],
                             yAxes: [{

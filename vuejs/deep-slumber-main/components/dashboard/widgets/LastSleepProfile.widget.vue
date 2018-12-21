@@ -5,6 +5,10 @@
             Your last sleep profile
         </h1>
         <canvas ref="canvas" width="100%" height="100"></canvas>
+        <button class="button" @click="buildChart('movement')">Movement</button>
+        <button class="button" @click="buildChart('temp')">Temperature</button>
+        <button class="button" @click="buildChart('hum')">Humidity</button>
+        <button class="button" @click="buildChart('press')">Pressure</button>
     </div>
 
 </template>
@@ -19,25 +23,48 @@
         props: {},
         data() {
             return {
-                'user_last_sleep_hours': 0,
-                'user_avg_sleep_hours': 0,
-                'has_profile': false,
-                'sleepProfile': {},
-                'chart': null,
-                'chartTemplates': {
+                user_last_sleep_hours: 0,
+                user_avg_sleep_hours: 0,
+                has_profile: false,
+                sleepProfile: {},
+                chart: null,
+                chartTemplates: {
                     'temp': {
-                        'chart_type': 'line',
-                        'event_type': '1001',
-                        'unit_label': 'Temp °C',
-                        'label_fn': (raw_label) => {let time = new Date(raw_label); return (time.getHours() + ':' + time.getMinutes() + ':' + (time.getSeconds() < 10 ? '0' + time.getSeconds() : time.getSeconds()));},
-                        'value_fn': (raw_value) => {return raw_value.toFixed(2)}
+                        chart_type: 'line',
+                        event_type: '1001',
+                        unit_label: 'Temp °C',
+                        area_color: 'rgba(255, 99, 132, 0.2)',
+                        line_color: 'rgba(255, 99,132,1)',
+                        label_fn: (raw_label) => {return new Date(raw_label); },
+                        value_fn: (raw_value) => {return raw_value.toFixed(2)}
+                    },
+                    'hum': {
+                        chart_type: 'line',
+                        event_type: '1003',
+                        unit_label: 'Humidity rel %',
+                        area_color: 'rgba(44, 192, 255, 0.2)',
+                        line_color: 'rgba(44,192,255,1)',
+                        label_fn: (raw_label) => {return new Date(raw_label); },
+                        value_fn: (raw_value) => {return raw_value.toFixed(2)}
+                    },
+                    'press': {
+                        chart_type: 'line',
+                        event_type: '1002',
+                        unit_label: 'Pressure millibars',
+                        area_color: 'rgba(99, 255, 132, 0.2)',
+                        line_color: 'rgba(99,255,132,1)',
+                        label_fn: (raw_label) => {return new Date(raw_label); },
+                        value_fn: (raw_value) => {return raw_value.toFixed(2)}
                     },
                     'movement': {
-                        'chart_type': 'line',
-                        'event_type': '1000',
-                        'unit_label': 'Movement',
-                        'label_fn': (raw_label) => {let time = new Date(raw_label); return (time.getHours() + ':' + time.getMinutes() + ':' + (time.getSeconds() < 10 ? '0' + time.getSeconds() : time.getSeconds()));},
-                        'value_fn': (raw_value) => {return raw_value}
+                        chart_type: 'line',
+                        event_type: '1000',
+                        unit_label: 'Movement',
+                        stepped_line: true,
+                        area_color: 'rgba(255, 99, 255, 0.2)',
+                        line_color: 'rgba(255,99,255,1)',
+                        label_fn: (raw_label) => {return new Date(raw_label); },
+                        value_fn: (raw_value) => {return raw_value}
                     }
                 }
             }
@@ -53,13 +80,15 @@
                     if (response && response.data) {
                         that.sleepProfile = response.data;
                         that.has_profile = true;
-                        that.buildChart(that.chartTemplates['movement']);
+                        that.buildChart('movement');
                     } else {
                         that.has_profile = false;
                     }
                 })
             },
             buildChart(template) {
+
+                template = this.chartTemplates[template];
                 let values = [];
                 let labels = [];
                 for (let event of this.sleepProfile.events) {
@@ -77,27 +106,28 @@
                         datasets: [{
                             label: template.unit_label,
                             data: values,
+                            steppedLine: template.stepped_line,
                             backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
+                                template.area_color,
                             ],
                             borderColor: [
-                                'rgba(255,99,132,1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
+                                template.line_color
                             ],
                             borderWidth: 2
                         }]
                     },
                     options: {
+
                         scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    unit: 'second',
+                                    displayFormats: {
+                                        second: 'h:mm:ss a'
+                                    }
+                                }
+                            }],
                             yAxes: [{
                                 ticks: {
                                     beginAtZero:false

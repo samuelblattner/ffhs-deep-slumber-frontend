@@ -14,8 +14,9 @@ import VueNativeSock from '../../node_modules/vue-native-websocket'
 window.Vue = require('vue');
 let Vue = window.Vue;
 Vue.use(VueRouter);
-Vue.use(VueNativeSock, 'ws://192.168.1.2:8777', {format: 'json'});
-// Vue.use(VueNativeSock, 'wss://deep-slumber.samuelblattner.ch:8777', {format: 'json'});
+// TODO: Put this to env vars somehow...
+// Vue.use(VueNativeSock, 'ws://192.168.1.2:8777', {format: 'json'});
+Vue.use(VueNativeSock, 'wss://deep-slumber.samuelblattner.ch:8777', {format: 'json'});
 
 const routes = [
     {path: '/', component: DashboardView},

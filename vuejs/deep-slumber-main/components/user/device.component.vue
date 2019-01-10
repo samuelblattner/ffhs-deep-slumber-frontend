@@ -3,7 +3,7 @@
         <ul class="content">
             <li v-for="device of devices" class="has-icon-right">
                 <div><strong>{{device.hwid.slice(0, 16)}}...</strong>(<span :class="{is_success:device.isConnected}">{{device.isConnected ? 'online' : 'offline'}}</span>)</div>
-                <ul>
+                <ul class="event-list" ref="list">
                     <li v-for="event of device.events">{{event}}</li>
                 </ul>
             </li>
@@ -54,7 +54,10 @@
                 validateMsg: '',
                 showAddModal: false,
                 user: null,
-                deviceState: null
+                deviceState: null,
+                STATES: [
+                    'DUMMY', 'IDLE', 'READY', 'RECORDING', 'PAUSED'
+                ]
             }
         },
         methods: {
@@ -106,11 +109,84 @@
             handleDeviceEvent(event) {
                 for (let device of this.devices) {
                     if (device.hwid === event.hwid) {
-                        device.events.push(event);
+
+                        let eventEntry = '';
+
+                        // TODO: Put to config and solve with generic event translation routine
+                        switch(event.event_type) {
+                            case 2000:
+                            {
+                                eventEntry += 'State Change: ' + this.STATES[event.value];
+                                break;
+                            }
+                            case 1:
+                            {
+                                eventEntry += 'Start Recording';
+                                break;
+                            }
+                            case 2:
+                            {
+                                eventEntry += 'Stop Recording';
+                                break;
+                            }
+                            case 3:
+                            {
+                                eventEntry += 'Pause Recording';
+                                break;
+                            }
+                            case 4:
+                            {
+                                eventEntry += 'Resume Recording';
+                                break;
+                            }
+                            case 10:
+                            {
+                                eventEntry += 'Start Waking Process';
+                                break;
+                            }
+                            case 11:
+                            {
+                                eventEntry += 'Abort Waking Process';
+                                break;
+                            }
+                            case 12:
+                            {
+                                eventEntry += 'End Waking Process';
+                                break;
+                            }
+                            case 1000:
+                            {
+                                eventEntry += 'Movement';
+                                break;
+                            }
+                            case 1001:
+                            {
+                                eventEntry += 'Temperature ' + event.value.toFixed(2) + ' °C';
+                                break;
+                            }
+                            case 1002:
+                            {
+                                eventEntry += 'Pressure ' + event.value.toFixed(2) + ' mbar';
+                                break;
+                            }
+                            case 1003:
+                            {
+                                eventEntry += 'Humidity ' + event.value.toFixed(2) + '%';
+                                break;
+                            }
+
+                        }
+                        device.events.push(event.timestamp + ': ' + eventEntry);
+                        let that = this;
+                        this.$nextTick(() => {
+                            that.$refs.list[0].scrollTop = that.$refs.list[0].scrollHeight || 0;
+                        });
+
                     }
                 }
             },
             handleWebsocketMessage(msg) {
+
                 let parsedMessage = {};
 
                 try {

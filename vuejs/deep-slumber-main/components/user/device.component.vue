@@ -167,7 +167,7 @@
                         that.devices.push(new Device(deviceData));
                     }
 
-                    that.establishLiveDeviceInfo();
+                    setTimeout(that.establishLiveDeviceInfo, 1000);
 
                 }).catch(error => {
 
